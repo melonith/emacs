@@ -1,4 +1,4 @@
-;; init.el ~*~ lexical-binding: t; ~*~
+;;; init.el ~*~ lexical-binding: t; ~*~
 
 ;;; user
 (setq user-mail-address "lonniefr@proton.me"
@@ -18,7 +18,27 @@
       (load-theme 'modus-operandi t)
       (setq my/theme-selection-night t))))
 
+(defun my/toggle-window-transparency (arg)
+  "Toggle the value of `alpha-background'.
+Toggles between 100 and 75 by default. Can choose which value to
+if called with ARG, or any prefix argument."
+  (interactive "P")
+  (let ((transparency (pcase arg
+			((pred numberp) arg)
+			((pred car) (read-number "Change the transparency to which value (0-100)? "))
+			(_
+			 (pcase (frame-parameter nil 'alpha-background)
+			   (75 100)
+			   (100 75)
+			   (t 100))))))
+    (set-frame-parameter nil 'alpha-background transparency)))
+
+(global-set-key (kbd "C-c a") 'my/toggle-window-transparency)
 (global-set-key (kbd "C-c t") 'my/toggle-theme)
+;; Set transparency to 75 by default
+(my/toggle-window-transparency 75)
+
+(global-set-key (kbd "C-x k") 'kill-current-buffer) ; don't ask to confirm to kill the buffer.
 
 ;;; Autocomplete
 (fido-mode +1)
@@ -28,7 +48,7 @@
 			  basic
 			  partial-completion
 			  emacs22
-			  substring
+			  substringround
 			  initials
 			  shorhand)
       completion-auto-select t
@@ -76,6 +96,8 @@
 
 (add-hook 'org-mode-hook 'visual-line-mode)
 (setq initial-major-mode (quote org-mode))
+(setq initial-scratch-message nil)
+(setq org-startup-indented t)
 
 ;;; meow edit
 (defun meow-setup ()
@@ -166,3 +188,11 @@
   :config
   (meow-setup)
   (meow-global-mode 1))
+
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode 1))
+
+(use-package go-mode
+  :ensure t)
