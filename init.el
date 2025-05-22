@@ -33,7 +33,7 @@ if called with ARG, or any prefix argument."
 			   (t 100))))))
     (set-frame-parameter nil 'alpha-background transparency)))
 
-(global-set-key (kbd "C-c a") 'my/toggle-window-transparency)
+(global-set-key (kbd "C-c x") 'my/toggle-window-transparency)
 (global-set-key (kbd "C-c t") 'my/toggle-theme)
 ;; Set transparency to 75 by default
 (my/toggle-window-transparency 75)
@@ -80,7 +80,8 @@ if called with ARG, or any prefix argument."
 ;;; package setup
 (require 'package)
 (add-to-list 'package-archives
-	     '("melpa" . "https://melpa.org/packages/") t)
+	     '("melpa" . "https://melpa.org/packages/")
+	     '("org" . "https://orgmode.org/elpa/"))
 
 (unless (package-installed-p 'use-package)
   (package-initialize)
@@ -196,3 +197,40 @@ if called with ARG, or any prefix argument."
 
 (use-package go-mode
   :ensure t)
+
+;; org mode settings
+(use-package ledger-mode
+  :ensure t)
+
+(use-package org
+  :ensure org-contrib
+  :pin gnu)
+
+(setq org-directory "~/org/")
+
+(global-set-key (kbd "C-c l") #'org-store-link)
+(global-set-key (kbd "C-c a") #'org-agenda)
+(global-set-key (kbd "C-c c") #'org-capture)
+
+(setq org-capture-templates
+      `(("t" "Capture a new task"
+	 entry
+	 (file+headline "inbox.org" "Tasks")
+	 "** TODO %?\n%a")
+	("n" "Capture a new note"
+	 entry
+	 (file+headline "inbox.org" "Notes")
+	 "** %?\n[[%F]]")
+	("d" "Journal your dreams!"
+	 plain
+	 (file+headline ,(lambda () (concat (format-time-string "%F") ".org")) "Dreamlog")
+	 "%?")
+	("j" "Daily journal file"
+	 plain
+	 (file+headline ,(lambda () (concat (format-time-string "%F") ".org")) "Journal")
+	 "%?")))
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (ledger . t)))
