@@ -1,4 +1,4 @@
-;;; init.el ~*~ lexical-binding: t; ~*~
+;;; init.el -*- lexical-binding: t; -*-
 
 ;;; user
 (setq user-mail-address "lonniefr@proton.me"
@@ -30,7 +30,7 @@ if called with ARG, or any prefix argument."
 			 (pcase (frame-parameter nil 'alpha-background)
 			   (75 100)
 			   (100 75)
-			   (t 100))))))
+			   (_ 100))))))
     (set-frame-parameter nil 'alpha-background transparency)))
 
 (global-set-key (kbd "C-c x") 'my/toggle-window-transparency)
@@ -99,6 +99,9 @@ if called with ARG, or any prefix argument."
 (setq initial-major-mode (quote org-mode))
 (setq initial-scratch-message nil)
 (setq org-startup-indented t)
+
+(use-package eshell
+  :ensure t)
 
 ;;; meow edit
 (defun meow-setup ()
